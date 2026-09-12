@@ -1,0 +1,1420 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>오늘 뭐 먹지? 2.0</title>
+    <meta name="description" content="매콤/담백과 밥/면·빵 선택으로 딱 맞는 메뉴와 한 줄 추천 이유를 알려주는 스마트 메뉴 추천 앱" />
+    <meta property="og:title" content="오늘 뭐 먹지? 2.0" />
+    <meta property="og:description" content="매콤/담백과 밥/면·빵 선택으로 딱 맞는 메뉴와 한 줄 추천 이유를 알려주는 스마트 메뉴 추천 앱" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg-color: #f8fafc;
+        --card-bg: #ffffff;
+        --text-main: #0f172a;
+        --text-sub: #475569;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+        --primary-orange: #ea580c;
+        --primary-amber: #f59e0b;
+        --primary-gradient: linear-gradient(135deg, #f97316 0%, #f59e0b 100%);
+        --primary-hover: linear-gradient(135deg, #ea580c 0%, #d97706 100%);
+        --card-shadow: 0 4px 24px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+        --btn-shadow: 0 4px 14px 0 rgba(249, 115, 22, 0.28);
+        --radius-card: 24px;
+        --radius-btn: 16px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 24px 16px 40px;
+        line-height: 1.5;
+      }
+
+      .app-container {
+        width: 100%;
+        max-width: 440px;
+        margin: 0 auto;
+      }
+
+      /* 헤더 */
+      header {
+        text-align: center;
+        padding: 8px 0 24px;
+      }
+
+      .badge-sub {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        margin-bottom: 12px;
+        border-radius: 9999px;
+        background: #fef3c7;
+        border: 1px solid #fde68a;
+        color: #92400e;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: -0.2px;
+      }
+
+      .app-title-group {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+
+      .app-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        background: var(--primary-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+        box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+      }
+
+      .app-title {
+        font-size: 26px;
+        font-weight: 800;
+        color: var(--text-main);
+        letter-spacing: -0.5px;
+      }
+
+      .app-title span {
+        color: var(--primary-orange);
+      }
+
+      .app-desc {
+        margin-top: 8px;
+        font-size: 14px;
+        color: var(--text-sub);
+        word-break: keep-all;
+      }
+
+      /* 메인 흰색 카드 */
+      .card {
+        background-color: var(--card-bg);
+        border-radius: var(--radius-card);
+        border: 1px solid var(--border-color);
+        box-shadow: var(--card-shadow);
+        padding: 24px;
+        transition: all 0.25s ease;
+      }
+
+      @media (min-width: 640px) {
+        .card {
+          padding: 28px;
+        }
+      }
+
+      /* 스텝 섹션 */
+      .step-group {
+        margin-bottom: 24px;
+      }
+
+      .step-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+
+      .step-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+
+      .step-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: #ffedd5;
+        color: var(--primary-orange);
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .step-badge {
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+
+      /* 2열 선택 버튼 그리드 */
+      .choice-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .choice-btn {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 16px 10px;
+        border-radius: var(--radius-btn);
+        border: 2px solid var(--border-color);
+        background: #ffffff;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        min-height: 116px;
+        user-select: none;
+      }
+
+      .choice-btn:hover {
+        background-color: #f8fafc;
+        border-color: #cbd5e1;
+      }
+
+      .choice-btn.selected-spicy {
+        border-color: #f97316;
+        background-color: #fff7ed;
+        box-shadow: 0 4px 14px rgba(249, 115, 22, 0.12);
+      }
+
+      .choice-btn.selected-mild {
+        border-color: #10b981;
+        background-color: #ecfdf5;
+        box-shadow: 0 4px 14px rgba(16, 185, 129, 0.12);
+      }
+
+      .choice-btn.selected-rice {
+        border-color: #f59e0b;
+        background-color: #fffbeb;
+        box-shadow: 0 4px 14px rgba(245, 158, 11, 0.12);
+      }
+
+      .choice-btn.selected-noodle {
+        border-color: #6366f1;
+        background-color: #eef2ff;
+        box-shadow: 0 4px 14px rgba(99, 102, 241, 0.12);
+      }
+
+      .check-mark {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: var(--primary-orange);
+        color: white;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .selected-mild .check-mark {
+        background-color: #10b981;
+      }
+      .selected-rice .check-mark {
+        background-color: #f59e0b;
+      }
+      .selected-noodle .check-mark {
+        background-color: #6366f1;
+      }
+
+      .choice-btn.selected-spicy .check-mark,
+      .choice-btn.selected-mild .check-mark,
+      .choice-btn.selected-rice .check-mark,
+      .choice-btn.selected-noodle .check-mark {
+        display: flex;
+      }
+
+      .btn-emoji-box {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background-color: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 8px;
+        transition: transform 0.2s;
+      }
+
+      .choice-btn:hover .btn-emoji-box {
+        transform: scale(1.08);
+      }
+
+      .selected-spicy .btn-emoji-box { background-color: #ffedd5; }
+      .selected-mild .btn-emoji-box { background-color: #d1fae5; }
+      .selected-rice .btn-emoji-box { background-color: #fef3c7; }
+      .selected-noodle .btn-emoji-box { background-color: #e0e7ff; }
+
+      .btn-label {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+
+      .btn-subtext {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 2px;
+        font-weight: 500;
+        word-break: keep-all;
+      }
+
+      /* 추천받기 메인 버튼 */
+      .action-container {
+        padding-top: 8px;
+      }
+
+      .cta-btn {
+        width: 100%;
+        padding: 16px 20px;
+        border-radius: var(--radius-btn);
+        border: none;
+        font-size: 18px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        user-select: none;
+      }
+
+      .cta-btn.active {
+        background: var(--primary-gradient);
+        color: white;
+        box-shadow: var(--btn-shadow);
+      }
+
+      .cta-btn.active:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px 0 rgba(249, 115, 22, 0.35);
+      }
+
+      .cta-btn.active:active {
+        transform: scale(0.99);
+      }
+
+      .cta-btn.disabled {
+        background-color: #f1f5f9;
+        color: #94a3b8;
+        cursor: not-allowed;
+        border: 1px solid #e2e8f0;
+      }
+
+      .hint-text {
+        text-align: center;
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-top: 10px;
+        font-weight: 500;
+      }
+
+      /* 결과 화면 */
+      #result-section {
+        display: none;
+        animation: fadeIn 0.28s ease-out forwards;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .result-conditions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #f1f5f9;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .tags-wrap {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .pill-badge {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 9999px;
+        background-color: #f1f5f9;
+        color: #334155;
+      }
+
+      .pill-flavor {
+        background-color: #ffedd5;
+        color: #9a3412;
+      }
+
+      .pill-carb {
+        background-color: #fef3c7;
+        color: #92400e;
+      }
+
+      .result-header {
+        text-align: center;
+        padding: 16px 0 12px;
+      }
+
+      .result-emoji {
+        width: 88px;
+        height: 88px;
+        border-radius: 24px;
+        background-color: #fffbeb;
+        border: 1px solid #fde68a;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 46px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.12);
+      }
+
+      .result-category {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 6px;
+        background-color: #f1f5f9;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+
+      .result-title {
+        font-size: 26px;
+        font-weight: 800;
+        color: var(--text-main);
+        letter-spacing: -0.5px;
+        word-break: keep-all;
+      }
+
+      /* 한 줄 추천 이유 카드 */
+      .reason-box {
+        margin: 16px 0;
+        padding: 16px;
+        border-radius: 18px;
+        background-color: #fff7ed;
+        border: 1px solid #fed7aa;
+        text-align: left;
+      }
+
+      .reason-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 800;
+        color: #9a3412;
+        margin-bottom: 4px;
+      }
+
+      .reason-content {
+        font-size: 16px;
+        font-weight: 700;
+        color: #7c2d12;
+        line-height: 1.45;
+        word-break: keep-all;
+      }
+
+      /* 꿀팁 박스 */
+      .tip-box {
+        padding: 12px 14px;
+        border-radius: 14px;
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        text-align: left;
+        font-size: 13px;
+        color: #475569;
+        margin-bottom: 14px;
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+      }
+
+      .tip-icon {
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .hashtag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+        margin-bottom: 18px;
+      }
+
+      .hashtag {
+        font-size: 12px;
+        color: #64748b;
+        background-color: #f1f5f9;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-weight: 500;
+      }
+
+      /* 결과 액션 버튼 */
+      .result-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .sub-action-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .secondary-btn {
+        padding: 12px 14px;
+        border-radius: 14px;
+        background-color: #ffffff;
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.2s;
+      }
+
+      .secondary-btn:hover {
+        background-color: #f8fafc;
+        border-color: #cbd5e1;
+      }
+
+      .secondary-btn:active {
+        transform: scale(0.99);
+      }
+
+      /* 최근 본 추천 */
+      .history-box {
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1px solid #f1f5f9;
+      }
+
+      .history-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: #64748b;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .history-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background-color: #f8fafc;
+        border: 1px solid #edf2f7;
+        margin-bottom: 6px;
+        cursor: pointer;
+        transition: background 0.15s;
+        text-align: left;
+      }
+
+      .history-item:hover {
+        background-color: #fff7ed;
+        border-color: #fed7aa;
+      }
+
+      .history-item-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+
+      .history-item-cat {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-left: 6px;
+      }
+
+      /* 정보 배너 */
+      .info-banner {
+        margin-top: 16px;
+        padding: 14px 16px;
+        border-radius: 18px;
+        background-color: #fffbeb;
+        border: 1px solid #fef3c7;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        color: #92400e;
+        line-height: 1.4;
+      }
+
+      /* 푸터 */
+      footer {
+        margin-top: 32px;
+        text-align: center;
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      /* 회전 애니메이션 */
+      .spin-icon {
+        display: inline-block;
+        transition: transform 0.4s ease;
+      }
+      .spinning {
+        transform: rotate(360deg);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- 헤더 -->
+      <header>
+        <div class="badge-sub">
+          ✨ 취향 맞춤 스마트 추천
+        </div>
+        <div class="app-title-group" id="header-logo" title="처음으로 리셋">
+          <div class="app-icon">🍽️</div>
+          <h1 class="app-title">오늘 뭐 먹지? <span>2.0</span></h1>
+        </div>
+        <p class="app-desc">
+          두 가지만 선택하면 지금 딱 어울리는 메뉴와 추천 이유를 알려드려요!
+        </p>
+      </header>
+
+      <!-- 메인 화이트 카드 -->
+      <main class="card" id="app-card">
+        <!-- 1. 입력 선택 화면 -->
+        <section id="selection-section">
+          <!-- 1단계: 맛 선택 -->
+          <div class="step-group">
+            <div class="step-header">
+              <div class="step-title">
+                <span class="step-num">1</span>
+                <span>어떤 맛이 끌리시나요?</span>
+              </div>
+              <span class="step-badge">택 1</span>
+            </div>
+            <div class="choice-grid">
+              <button
+                type="button"
+                id="btn-spicy"
+                class="choice-btn"
+                onclick="selectFlavor('spicy')"
+                aria-pressed="false"
+              >
+                <div class="check-mark">✓</div>
+                <div class="btn-emoji-box">🌶️</div>
+                <div class="btn-label">매콤한 맛</div>
+                <div class="btn-subtext">칼칼하고 스트레스 풀리는 맛</div>
+              </button>
+
+              <button
+                type="button"
+                id="btn-mild"
+                class="choice-btn"
+                onclick="selectFlavor('mild')"
+                aria-pressed="false"
+              >
+                <div class="check-mark">✓</div>
+                <div class="btn-emoji-box">🌿</div>
+                <div class="btn-label">담백한 맛</div>
+                <div class="btn-subtext">자극 없이 속 편하고 깔끔한 맛</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2단계: 주식 선택 -->
+          <div class="step-group">
+            <div class="step-header">
+              <div class="step-title">
+                <span class="step-num">2</span>
+                <span>주식을 골라주세요</span>
+              </div>
+              <span class="step-badge">택 1</span>
+            </div>
+            <div class="choice-grid">
+              <button
+                type="button"
+                id="btn-rice"
+                class="choice-btn"
+                onclick="selectCarb('rice')"
+                aria-pressed="false"
+              >
+                <div class="check-mark">✓</div>
+                <div class="btn-emoji-box">🍚</div>
+                <div class="btn-label">든든한 밥</div>
+                <div class="btn-subtext">속을 꽉 채워주는 쌀밥 요리</div>
+              </button>
+
+              <button
+                type="button"
+                id="btn-noodle"
+                class="choice-btn"
+                onclick="selectCarb('noodle_bread')"
+                aria-pressed="false"
+              >
+                <div class="check-mark">✓</div>
+                <div class="btn-emoji-box">🍜</div>
+                <div class="btn-label">면 · 빵</div>
+                <div class="btn-subtext">호로록 면과 맛있는 빵</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- 3단계: 추천받기 큰 버튼 -->
+          <div class="action-container">
+            <button
+              type="button"
+              id="btn-submit"
+              class="cta-btn disabled"
+              disabled
+              onclick="generateRecommendation()"
+            >
+              <span>✨</span>
+              <span>오늘의 메뉴 추천받기</span>
+            </button>
+            <div class="hint-text" id="selection-hint">
+              맛(매콤/담백)과 주식(밥/면·빵)을 먼저 선택해주세요.
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. 추천 결과 화면 -->
+        <section id="result-section">
+          <div class="result-conditions">
+            <div class="tags-wrap">
+              <span class="pill-badge">선택 조건</span>
+              <span class="pill-badge pill-flavor" id="res-tag-flavor">🌶️ 매콤한 맛</span>
+              <span class="pill-badge pill-carb" id="res-tag-carb">🍚 든든한 밥</span>
+            </div>
+            <span class="step-badge" id="res-candidate-count">후보 7종 중 추천</span>
+          </div>
+
+          <div class="result-header">
+            <div class="result-emoji" id="res-emoji">🍲</div>
+            <div>
+              <span class="result-category" id="res-category">한식</span>
+            </div>
+            <h2 class="result-title" id="res-title">불향 가득 제육볶음 덮밥</h2>
+          </div>
+
+          <!-- 한 줄 추천 이유 표시 영역 -->
+          <div class="reason-box">
+            <div class="reason-label">
+              <span>💡</span>
+              <span>오늘의 한 줄 추천 이유</span>
+            </div>
+            <div class="reason-content" id="res-reason">
+              "화끈한 불향과 달콤매콤한 양념이 밥 한 공기를 순식간에 비우게 해줘요!"
+            </div>
+          </div>
+
+          <!-- 맛있게 먹는 꿀팁 -->
+          <div class="tip-box" id="res-tip-box">
+            <span class="tip-icon">👨‍🍳</span>
+            <div id="res-tip-text">
+              <strong>더 맛있게 먹는 팁:</strong> 반숙 계란후라이와 참기름을 곁들이면 최고예요.
+            </div>
+          </div>
+
+          <!-- 해시태그 -->
+          <div class="hashtag-list" id="res-tags">
+            <span class="hashtag">#점심인기</span>
+            <span class="hashtag">#스트레스해소</span>
+          </div>
+
+          <!-- 결과 액션 버튼 -->
+          <div class="result-actions">
+            <button
+              type="button"
+              id="btn-reroll"
+              class="cta-btn active"
+              onclick="rerollMenu()"
+            >
+              <span class="spin-icon" id="reroll-icon">🔄</span>
+              <span>다른 메뉴 추천받기</span>
+            </button>
+
+            <div class="sub-action-grid">
+              <button
+                type="button"
+                id="btn-copy"
+                class="secondary-btn"
+                onclick="copyMenuInfo()"
+              >
+                <span id="copy-icon">📋</span>
+                <span id="copy-text">메뉴 정보 복사</span>
+              </button>
+
+              <button
+                type="button"
+                class="secondary-btn"
+                onclick="resetSelection()"
+              >
+                <span>↩️</span>
+                <span>조건 다시 고르기</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 최근 추천 내역 -->
+          <div class="history-box" id="history-box" style="display: none;">
+            <div class="history-title">
+              <span>🕒</span>
+              <span>방금 전에 본 메뉴</span>
+            </div>
+            <div id="history-list"></div>
+          </div>
+        </section>
+      </main>
+
+      <!-- 안내 배너 -->
+      <aside class="info-banner" id="guide-banner">
+        <span>💡</span>
+        <span>매일 돌아오는 "오늘 뭐 먹지?" 고민을 단 10초 만에 시원하게 해결해 드립니다.</span>
+      </aside>
+
+      <!-- 푸터 -->
+      <footer>
+        <p>오늘 뭐 먹지? 2.0 • 맞춤형 음식 추천 가이드</p>
+        <p style="margin-top: 4px; opacity: 0.8;">맛있게 드시고 든든한 하루 보내세요!</p>
+      </footer>
+    </div>
+
+    <script>
+      // 메뉴 데이터베이스 (매콤/담백 x 밥/면·빵)
+      const MENU_DATABASE = [
+        // 1. 매콤 + 밥
+        {
+          id: 'spicy-rice-1',
+          name: '불향 가득 제육볶음 덮밥',
+          flavor: 'spicy',
+          carb: 'rice',
+          reason: '화끈한 불향과 달콤매콤한 양념이 밥 한 공기를 순식간에 비우게 해줘요!',
+          category: '한식',
+          emoji: '🥩',
+          tip: '반숙 계란후라이와 참기름 한 방울을 곁들이면 최고의 한 끼가 됩니다.',
+          tags: ['점심인기', '스트레스해소', '든든한고기']
+        },
+        {
+          id: 'spicy-rice-2',
+          name: '얼큰 해물 순두부찌개 백반',
+          flavor: 'spicy',
+          carb: 'rice',
+          reason: '칼칼하고 뜨끈한 국물에 부드러운 순두부가 속을 시원하게 풀어줍니다.',
+          category: '한식',
+          emoji: '🍲',
+          tip: '국물에 밥을 푹 말아 잘 익은 겉절이 한 점 얹어 드셔보세요.',
+          tags: ['국물요리', '해장추천', '속풀리는맛']
+        },
+        {
+          id: 'spicy-rice-3',
+          name: '스팸 김치볶음밥',
+          flavor: 'spicy',
+          carb: 'rice',
+          reason: '잘 익은 김치의 아삭함과 짭조름한 스팸의 조화로 언제 먹어도 실패 없는 보장된 맛!',
+          category: '분식/간편식',
+          emoji: '🍳',
+          tip: '모짜렐라 치즈나 김가루를 듬뿍 뿌리면 풍미가 배가 돼요.',
+          tags: ['국민메뉴', '자취생최애', '감칠맛폭발']
+        },
+        {
+          id: 'spicy-rice-4',
+          name: '매콤 쫄깃 낙지 비빔밥',
+          flavor: 'spicy',
+          carb: 'rice',
+          reason: '탱글탱글 쫄깃한 낙지와 알싸한 특제 고추장 양념이 지친 기운을 돋워줍니다.',
+          category: '한식',
+          emoji: '🐙',
+          tip: '콩나물과 아삭한 상추를 함께 넣어 비벼 먹으면 덜 맵고 산뜻해요.',
+          tags: ['보양식', '매콤알싸', '스테미너']
+        },
+        {
+          id: 'spicy-rice-5',
+          name: '사천식 마파두부 덮밥',
+          flavor: 'spicy',
+          carb: 'rice',
+          reason: '얼얼한 마라향과 부드러운 두부, 다진 고기의 감칠맛이 밥과 찰떡궁합이에요.',
+          category: '중식',
+          emoji: '🌶️',
+          tip: '산초가루(화조)를 살짝 곁들이면 정통 사천의 맛을 제대로 느낄 수 있어요.',
+          tags: ['중식별미', '얼얼한맛', '덮밥강추']
+        },
+        {
+          id: 'spicy-rice-6',
+          name: '칼칼한 닭볶음탕과 공깃밥',
+          flavor: 'spicy',
+          carb: 'rice',
+          reason: '포슬포슬 감자와 부드러운 닭고기, 자작한 매콤 양념에 밥을 쓱쓱 비벼 먹기 딱 좋아요.',
+          category: '한식',
+          emoji: '🍗',
+          tip: '남은 국물에 밥과 김가루, 참기름으로 볶음밥까지 마무리해보세요.',
+          tags: ['든든한저녁', '단짠매콤', '인기메뉴']
+        },
+        {
+          id: 'spicy-rice-7',
+          name: '얼큰 소고기 육개장 밥',
+          flavor: 'spicy',
+          carb: 'rice',
+          reason: '진한 사골 육수에 대파와 고사리, 결대로 찢은 양지머리가 어우러져 깊고 칼칼한 맛을 냅니다.',
+          category: '한식',
+          emoji: '🥣',
+          tip: '밥을 반 공기씩 나누어 말아 드시면 밥알 식감이 살아있어요.',
+          tags: ['보양국밥', '얼큰시원', '영양만점']
+        },
+
+        // 2. 매콤 + 면·빵
+        {
+          id: 'spicy-noodle-1',
+          name: '불향 가득 얼큰 해물 짬뽕',
+          flavor: 'spicy',
+          carb: 'noodle_bread',
+          reason: '해물의 시원함과 센 불에 볶아낸 불맛이 가슴 속까지 뻥 뚫리게 해줍니다.',
+          category: '중식',
+          emoji: '🍜',
+          tip: '단무지에 식초를 톡 뿌려서 곁들이면 기름기 없이 깔끔해요.',
+          tags: ['해장원탑', '불맛', '중독성']
+        },
+        {
+          id: 'spicy-noodle-2',
+          name: '새콤달콤 매콤 비빔국수',
+          flavor: 'spicy',
+          carb: 'noodle_bread',
+          reason: '입맛 없을 때 특효약! 새콤달콤 매콤한 특제 양념장에 쫄깃한 면발이 입맛을 확 살려줘요.',
+          category: '한식',
+          emoji: '🥢',
+          tip: '아삭한 오이채와 삶은 달걀, 열무김치를 올리면 최고입니다.',
+          tags: ['입맛돋우기', '가벼운한끼', '새콤매콤']
+        },
+        {
+          id: 'spicy-noodle-3',
+          name: '매콤 치즈 떡볶이와 모둠튀김',
+          flavor: 'spicy',
+          carb: 'noodle_bread',
+          reason: '한국인의 영원한 소울푸드! 쫄깃한 떡과 고소한 치즈의 환상 케미로 스트레스가 날아가요.',
+          category: '분식',
+          emoji: '🫕',
+          tip: '바삭한 김말이나 야끼만두를 매콤한 국물에 푹 찍어 드세요.',
+          tags: ['국민간식', '힐링푸드', '치즈토핑']
+        },
+        {
+          id: 'spicy-noodle-4',
+          name: '매콤 아라비아따 토마토 파스타',
+          flavor: 'spicy',
+          carb: 'noodle_bread',
+          reason: '상큼한 토마토 소스에 페페론치노의 알싸한 매운맛이 더해져 느끼함 없이 깔끔해요.',
+          category: '양식',
+          emoji: '🍝',
+          tip: '마늘 바게트 빵을 곁들여 남은 소스를 얹어 먹으면 환상적입니다.',
+          tags: ['이탈리안', '토마토파스타', '깔끔매콤']
+        },
+        {
+          id: 'spicy-noodle-5',
+          name: '얼얼하고 화끈한 DIY 마라탕',
+          flavor: 'spicy',
+          carb: 'noodle_bread',
+          reason: '옥수수면과 당면, 분모자에 얼얼한 마라 국물이 배어들어 기분 전환에 제격이에요.',
+          category: '아시안',
+          emoji: '🍲',
+          tip: '고소한 땅콩 소스(마장)를 듬뿍 찍어 드시면 맛이 배가됩니다.',
+          tags: ['MZ인기', '얼얼한마라', '면요리']
+        },
+        {
+          id: 'spicy-noodle-6',
+          name: '매콤 칠리 핫도그 & 감자튀김',
+          flavor: 'spicy',
+          carb: 'noodle_bread',
+          reason: '육즙 가득한 소시지에 매콤한 할라피뇨와 칠리 살사 소스가 더해진 든든한 빵 요리!',
+          category: '양식/스낵',
+          emoji: '🌭',
+          tip: '시원한 탄산음료나 탄산수를 곁들이면 청량감이 극대화됩니다.',
+          tags: ['간편식', '브런치', '미국스타일']
+        },
+        {
+          id: 'spicy-noodle-7',
+          name: '매콤 해물 볶음 우동 (야끼우동)',
+          flavor: 'spicy',
+          carb: 'noodle_bread',
+          reason: '통통하고 쫄깃한 우동 면발에 매콤달콤한 소스와 신선한 야채가 잘 볶아져 풍미가 가득해요.',
+          category: '일식/퓨전',
+          emoji: '🥢',
+          tip: '가쓰오부시를 위에 솔솔 뿌려 춤추는 모습을 보며 즐겨보세요.',
+          tags: ['면요리', '볶음면', '식감최고']
+        },
+
+        // 3. 담백 + 밥
+        {
+          id: 'mild-rice-1',
+          name: '뽀얗고 진한 설렁탕 한 그릇',
+          flavor: 'mild',
+          carb: 'rice',
+          reason: '오랜 시간 푹 고아낸 진한 사골 국물이 지친 위장을 편안하고 따뜻하게 감싸줍니다.',
+          category: '한식',
+          emoji: '🍲',
+          tip: '송송 썬 대파를 듬뿍 넣고 잘 익은 깍두기와 함께 드세요.',
+          tags: ['보양식', '속편한한끼', '따끈한국물']
+        },
+        {
+          id: 'mild-rice-2',
+          name: '바삭바삭 일식 등심 돈가스 정식',
+          flavor: 'mild',
+          carb: 'rice',
+          reason: '두툼한 생등심의 겉바속촉 튀김옷과 고슬고슬한 쌀밥의 정갈하고 든든한 조합!',
+          category: '일식',
+          emoji: '🍱',
+          tip: '연겨자를 소스에 살짝 풀거나 핑크솔트를 찍어 담백하게 즐겨보세요.',
+          tags: ['겉바속촉', '든든한식사', '호불호없는맛']
+        },
+        {
+          id: 'mild-rice-3',
+          name: '신선한 생연어 아보카도 포케볼',
+          flavor: 'mild',
+          carb: 'rice',
+          reason: '부드러운 연어, 숲의 버터 아보카도, 신선한 채소와 현미밥이 어우러진 클린하고 건강한 맛!',
+          category: '퓨전/샐러드',
+          emoji: '🥗',
+          tip: '오리엔탈 드레싱이나 스리라차 마요를 가볍게 둘러 즐기세요.',
+          tags: ['건강식', '다이어트', '프레시한한끼']
+        },
+        {
+          id: 'mild-rice-4',
+          name: '정갈한 모둠 초밥 & 미소된장국',
+          flavor: 'mild',
+          carb: 'rice',
+          reason: '신선한 해산물 본연의 깔끔하고 달큰한 맛과 따뜻한 미소 장국으로 기분 좋은 식사!',
+          category: '일식',
+          emoji: '🍣',
+          tip: '담백한 흰살생선부터 시작해 참치, 연어 순으로 드시면 맛을 온전히 느껴요.',
+          tags: ['정갈함', '고급스러운맛', '가벼운포만감']
+        },
+        {
+          id: 'mild-rice-5',
+          name: '영양 가득 소고기 버섯 솥밥',
+          flavor: 'mild',
+          carb: 'rice',
+          reason: '향긋한 표고버섯과 부드러운 소고기가 밥알 하나하나에 배어 깊고 은은한 풍미를 줍니다.',
+          category: '한식',
+          emoji: '🍚',
+          tip: '달래 간장이나 부추 간장 양념장을 살짝 둘러 비벼 먹으면 꿀맛!',
+          tags: ['웰빙식', '솥밥', '고소담백']
+        },
+        {
+          id: 'mild-rice-6',
+          name: '추억의 간장 버터 계란밥',
+          flavor: 'mild',
+          carb: 'rice',
+          reason: '버터의 고소함과 계란 노른자의 부드러움, 짭짤한 간장이 만드는 소박하지만 완벽한 위로의 맛.',
+          category: '간편가정식',
+          emoji: '🍳',
+          tip: '바삭하게 구운 김에 싸서 드시면 계속 들어가는 마성의 맛!',
+          tags: ['초간단', '버터풍미', '소울푸드']
+        },
+        {
+          id: 'mild-rice-7',
+          name: '맑은 소고기 뭇국 백반',
+          flavor: 'mild',
+          carb: 'rice',
+          reason: '시원하고 달큰한 무와 양지머리의 맑은 육수가 자극 없이 편안한 밥상을 만들어줍니다.',
+          category: '한식',
+          emoji: '🥣',
+          tip: '후춧가루를 살짝 톡톡 뿌려 김치 한 조각과 함께 드셔보세요.',
+          tags: ['자극없는', '집밥느낌', '소화잘되는']
+        },
+
+        // 4. 담백 + 면·빵
+        {
+          id: 'mild-noodle-1',
+          name: '맑고 따끈한 멸치 잔치국수',
+          flavor: 'mild',
+          carb: 'noodle_bread',
+          reason: '진하게 우려낸 멸치 육수와 부드러운 소면이 호로록 넘어가 마음까지 포근해지는 맛이에요.',
+          category: '한식',
+          emoji: '🍜',
+          tip: '애호박 지단과 양념장 한 스푼 얹어 담백하게 호로록 드세요.',
+          tags: ['가벼운한끼', '호로록', '따스한국물']
+        },
+        {
+          id: 'mild-noodle-2',
+          name: '풍미 가득 마늘 알리오 올리오',
+          flavor: 'mild',
+          carb: 'noodle_bread',
+          reason: '좋은 올리브오일과 구운 마늘의 은은한 향이 스파게티 면에 듬뿍 밴 이탈리아 정통의 맛!',
+          category: '양식',
+          emoji: '🍝',
+          tip: '파슬리와 파마산 치즈 가루를 솔솔 뿌리면 레스토랑 분위기 완성!',
+          tags: ['오일파스타', '깔끔담백', '마늘향가득']
+        },
+        {
+          id: 'mild-noodle-3',
+          name: '신선한 잠봉뵈르 또는 BLT 샌드위치',
+          flavor: 'mild',
+          carb: 'noodle_bread',
+          reason: '겉은 바삭하고 속은 쫄깃한 바게트에 고급 버터와 햄, 신선한 채소가 담백한 조화를 이룹니다.',
+          category: '베이커리/브런치',
+          emoji: '🥪',
+          tip: '향긋한 아메리카노나 따뜻한 수프 한 컵과 함께하면 완벽한 브런치!',
+          tags: ['브런치', '담백고소', '깔끔식사']
+        },
+        {
+          id: 'mild-noodle-4',
+          name: '탱글탱글 사누끼 붓카케 우동',
+          flavor: 'mild',
+          carb: 'noodle_bread',
+          reason: '가쓰오부시 쯔유의 달큰담백한 감칠맛과 입안에서 춤추는 탄력 넘치는 면발의 매력!',
+          category: '일식',
+          emoji: '🥢',
+          tip: '반숙 튀김란(타마고 텐)을 터뜨려 면과 함께 적셔 드세요.',
+          tags: ['면발장인', '쯔유감칠맛', '정갈한국수']
+        },
+        {
+          id: 'mild-noodle-5',
+          name: '시원하고 개운한 바지락 칼국수',
+          flavor: 'mild',
+          carb: 'noodle_bread',
+          reason: '싱싱한 바지락이 듬뿍 들어가 국물이 맑고 시원하며, 쫄깃한 손칼국수가 든든함을 줍니다.',
+          category: '한식',
+          emoji: '🦪',
+          tip: '아삭한 겉절이 김치를 면 위에 얹어 크게 한 젓가락 드셔보세요.',
+          tags: ['시원한국물', '조개육수', '든든한면']
+        },
+        {
+          id: 'mild-noodle-6',
+          name: '담백한 버섯 크림 리가토니 파스타',
+          flavor: 'mild',
+          carb: 'noodle_bread',
+          reason: '자극적이지 않고 부드러운 생크림에 버섯 풍미가 더해져 묵직하고 고소한 행복을 줍니다.',
+          category: '양식',
+          emoji: '🍝',
+          tip: '통후추를 굵게 갈아 넣으면 느끼함 없이 깔끔하게 즐길 수 있어요.',
+          tags: ['크림파스타', '고소함극대화', '포근한맛']
+        },
+        {
+          id: 'mild-noodle-7',
+          name: '부드러운 에그마요 모닝빵 샌드위치',
+          flavor: 'mild',
+          carb: 'noodle_bread',
+          reason: '삶은 달걀의 몽글몽글함과 고소한 마요네즈가 촉촉한 모닝빵과 만나 입안 가득 퍼집니다.',
+          category: '베이커리/스낵',
+          emoji: '🥯',
+          tip: '딸기잼을 빵 안쪽에 얇게 바르면 단짠단짠 매력 폭발!',
+          tags: ['부드러움', '아이들도좋아하는', '소풍느낌']
+        }
+      ];
+
+      // 상태 변수
+      let selectedFlavor = null;
+      let selectedCarb = null;
+      let currentRecommendation = null;
+      let historyList = [];
+
+      // 맛 선택
+      function selectFlavor(flavor) {
+        selectedFlavor = flavor;
+        const btnSpicy = document.getElementById('btn-spicy');
+        const btnMild = document.getElementById('btn-mild');
+
+        if (flavor === 'spicy') {
+          btnSpicy.className = 'choice-btn selected-spicy';
+          btnSpicy.setAttribute('aria-pressed', 'true');
+          btnMild.className = 'choice-btn';
+          btnMild.setAttribute('aria-pressed', 'false');
+        } else {
+          btnMild.className = 'choice-btn selected-mild';
+          btnMild.setAttribute('aria-pressed', 'true');
+          btnSpicy.className = 'choice-btn';
+          btnSpicy.setAttribute('aria-pressed', 'false');
+        }
+
+        updateSubmitState();
+      }
+
+      // 주식 선택
+      function selectCarb(carb) {
+        selectedCarb = carb;
+        const btnRice = document.getElementById('btn-rice');
+        const btnNoodle = document.getElementById('btn-noodle');
+
+        if (carb === 'rice') {
+          btnRice.className = 'choice-btn selected-rice';
+          btnRice.setAttribute('aria-pressed', 'true');
+          btnNoodle.className = 'choice-btn';
+          btnNoodle.setAttribute('aria-pressed', 'false');
+        } else {
+          btnNoodle.className = 'choice-btn selected-noodle';
+          btnNoodle.setAttribute('aria-pressed', 'true');
+          btnRice.className = 'choice-btn';
+          btnRice.setAttribute('aria-pressed', 'false');
+        }
+
+        updateSubmitState();
+      }
+
+      // 추천 버튼 활성화 여부 갱신
+      function updateSubmitState() {
+        const btnSubmit = document.getElementById('btn-submit');
+        const hint = document.getElementById('selection-hint');
+
+        if (selectedFlavor && selectedCarb) {
+          btnSubmit.className = 'cta-btn active';
+          btnSubmit.disabled = false;
+          hint.textContent = '준비 완료! 버튼을 누르면 추천 메뉴가 나타납니다.';
+          hint.style.color = '#15803d';
+        } else {
+          btnSubmit.className = 'cta-btn disabled';
+          btnSubmit.disabled = true;
+          hint.style.color = 'var(--text-muted)';
+          if (!selectedFlavor && !selectedCarb) {
+            hint.textContent = '맛(매콤/담백)과 주식(밥/면·빵)을 먼저 선택해주세요.';
+          } else if (!selectedFlavor) {
+            hint.textContent = '매콤 또는 담백 중 하나를 골라주세요.';
+          } else {
+            hint.textContent = '밥 또는 면·빵 중 하나를 골라주세요.';
+          }
+        }
+      }
+
+      // 일치하는 메뉴 리스트 가져오기
+      function getCandidateList() {
+        return MENU_DATABASE.filter(
+          item => item.flavor === selectedFlavor && item.carb === selectedCarb
+        );
+      }
+
+      // 추천 생성
+      function generateRecommendation() {
+        if (!selectedFlavor || !selectedCarb) return;
+
+        const candidates = getCandidateList();
+        if (candidates.length === 0) return;
+
+        // 중복 추천 방지 필터
+        let pool = candidates.filter(item => !currentRecommendation || item.id !== currentRecommendation.id);
+        if (pool.length === 0) pool = candidates;
+
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+        applyRecommendation(pick, candidates.length);
+
+        // 화면 전환
+        document.getElementById('selection-section').style.display = 'none';
+        document.getElementById('result-section').style.display = 'block';
+        document.getElementById('guide-banner').style.display = 'none';
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // 추천 내용 DOM 반영
+      function applyRecommendation(item, candidateCount) {
+        currentRecommendation = item;
+
+        // 태그 라벨
+        document.getElementById('res-tag-flavor').textContent =
+          item.flavor === 'spicy' ? '🌶️ 매콤한 맛' : '🌿 담백한 맛';
+        document.getElementById('res-tag-carb').textContent =
+          item.carb === 'rice' ? '🍚 든든한 밥' : '🍜 면 · 빵';
+        document.getElementById('res-candidate-count').textContent =
+          `후보 ${candidateCount}종 중 추천`;
+
+        // 음식 정보
+        document.getElementById('res-emoji').textContent = item.emoji;
+        document.getElementById('res-category').textContent = item.category;
+        document.getElementById('res-title').textContent = item.name;
+        document.getElementById('res-reason').textContent = `"${item.reason}"`;
+
+        // 꿀팁
+        const tipBox = document.getElementById('res-tip-box');
+        if (item.tip) {
+          tipBox.style.display = 'flex';
+          document.getElementById('res-tip-text').innerHTML =
+            `<strong>더 맛있게 먹는 팁:</strong> ${item.tip}`;
+        } else {
+          tipBox.style.display = 'none';
+        }
+
+        // 태그
+        const tagsContainer = document.getElementById('res-tags');
+        tagsContainer.innerHTML = '';
+        item.tags.forEach(t => {
+          const span = document.createElement('span');
+          span.className = 'hashtag';
+          span.textContent = `#${t}`;
+          tagsContainer.appendChild(span);
+        });
+
+        // 히스토리 기록
+        if (!historyList.some(h => h.id === item.id)) {
+          historyList.unshift(item);
+          renderHistory();
+        }
+      }
+
+      // 다른 메뉴 추천받기 (리롤)
+      function rerollMenu() {
+        const icon = document.getElementById('reroll-icon');
+        icon.classList.add('spinning');
+        setTimeout(() => icon.classList.remove('spinning'), 400);
+
+        const candidates = getCandidateList();
+        let pool = candidates.filter(item => item.id !== currentRecommendation.id);
+        if (pool.length === 0) pool = candidates;
+
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+        applyRecommendation(pick, candidates.length);
+      }
+
+      // 조건 다시 고르기 (리셋)
+      function resetSelection() {
+        document.getElementById('result-section').style.display = 'none';
+        document.getElementById('selection-section').style.display = 'block';
+        document.getElementById('guide-banner').style.display = 'flex';
+
+        selectedFlavor = null;
+        selectedCarb = null;
+        currentRecommendation = null;
+
+        // 버튼 초기화
+        document.getElementById('btn-spicy').className = 'choice-btn';
+        document.getElementById('btn-mild').className = 'choice-btn';
+        document.getElementById('btn-rice').className = 'choice-btn';
+        document.getElementById('btn-noodle').className = 'choice-btn';
+
+        document.getElementById('btn-spicy').setAttribute('aria-pressed', 'false');
+        document.getElementById('btn-mild').setAttribute('aria-pressed', 'false');
+        document.getElementById('btn-rice').setAttribute('aria-pressed', 'false');
+        document.getElementById('btn-noodle').setAttribute('aria-pressed', 'false');
+
+        updateSubmitState();
+      }
+
+      // 메뉴 정보 클립보드 복사
+      function copyMenuInfo() {
+        if (!currentRecommendation) return;
+
+        const copyText = `[오늘 뭐 먹지? 2.0 추천]\n메뉴: ${currentRecommendation.name}\n추천 이유: ${currentRecommendation.reason}`;
+
+        const handleSuccess = () => {
+          const copyLabel = document.getElementById('copy-text');
+          const copyIcon = document.getElementById('copy-icon');
+          copyLabel.textContent = '복사 완료!';
+          copyIcon.textContent = '✅';
+          setTimeout(() => {
+            copyLabel.textContent = '메뉴 정보 복사';
+            copyIcon.textContent = '📋';
+          }, 2000);
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(copyText).then(handleSuccess).catch(handleSuccess);
+        } else {
+          // Fallback
+          const ta = document.createElement('textarea');
+          ta.value = copyText;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand('copy');
+          } catch(e) {}
+          document.body.removeChild(ta);
+          handleSuccess();
+        }
+      }
+
+      // 최근 본 메뉴 렌더링
+      function renderHistory() {
+        const box = document.getElementById('history-box');
+        const list = document.getElementById('history-list');
+
+        // 현재 추천 메뉴를 제외한 최근 3개
+        const recent = historyList.filter(h => !currentRecommendation || h.id !== currentRecommendation.id).slice(0, 3);
+
+        if (recent.length === 0) {
+          box.style.display = 'none';
+          return;
+        }
+
+        box.style.display = 'block';
+        list.innerHTML = '';
+
+        recent.forEach(item => {
+          const row = document.createElement('div');
+          row.className = 'history-item';
+          row.innerHTML = `
+            <div>
+              <span style="font-size: 16px; margin-right: 6px;">${item.emoji}</span>
+              <span class="history-item-name">${item.name}</span>
+              <span class="history-item-cat">${item.category}</span>
+            </div>
+            <span style="color: #94a3b8; font-size: 13px;">➔</span>
+          `;
+          row.onclick = () => {
+            selectedFlavor = item.flavor;
+            selectedCarb = item.carb;
+            const candidates = getCandidateList();
+            applyRecommendation(item, candidates.length);
+          };
+          list.appendChild(row);
+        });
+      }
+
+      // 헤더 로고 클릭 시 처음으로
+      document.getElementById('header-logo').addEventListener('click', () => {
+        resetSelection();
+      });
+    </script>
+  </body>
+</html>

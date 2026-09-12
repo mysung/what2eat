@@ -1,0 +1,7 @@
+{
+  "name": "오늘 뭐 먹지? 2.0",
+  "description": "매콤/담백과 밥/면·빵 선택으로 딱 맞는 메뉴와 한 줄 추천 이유를 알려주는 스마트 메뉴 추천 앱",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
